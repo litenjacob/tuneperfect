@@ -4,34 +4,40 @@ on:
   push:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The Git tag to build and publish (e.g., v1.0.0)"
+        required: true
+        type: string
 
 jobs:
   build-api:
     name: Build API Image
     uses: ./.github/workflows/docker-build-api.yaml
     with:
-      tag: ${{ github.ref_name }}
+      tag: ${{ github.event.inputs.tag || github.ref_name }}
     secrets: inherit
 
   build-web:
     name: Build Web Image
     uses: ./.github/workflows/docker-build-web.yaml
     with:
-      tag: ${{ github.ref_name }}
+      tag: ${{ github.event.inputs.tag || github.ref_name }}
     secrets: inherit
 
   build-app:
     name: Build App Image
     uses: ./.github/workflows/docker-build-app.yaml
     with:
-      tag: ${{ github.ref_name }}
+      tag: ${{ github.event.inputs.tag || github.ref_name }}
     secrets: inherit
 
   build-game:
     name: Build Game
     uses: ./.github/workflows/build-game.yaml
     with:
-      tag: ${{ github.ref_name }}
+      tag: ${{ github.event.inputs.tag || github.ref_name }}
     secrets: inherit
 
   create-draft-release:
@@ -56,14 +62,14 @@ jobs:
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
+          tag: ${{ github.event.inputs.tag || github.ref_name }}
           writeToFile: false
 
       - name: Create Draft Release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: ${{ github.event.inputs.tag || github.ref_name }}
           draft: true
           body: ${{ steps.changelog.outputs.changes }}
           files: artifacts/**/*
