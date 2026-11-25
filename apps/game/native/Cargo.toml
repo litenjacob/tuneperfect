@@ -42,6 +42,10 @@ regex = "1"
 specta-serde = { version = "0.0.12", optional = true }
 specta-typescript = { version = "0.0.12", optional = true }
 
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2-core-audio = { version = "0.3", default-features = false, features = ["AudioHardware"] }
+objc2-core-foundation = "0.3"
+
 [features]
 # Exports `exportTypescriptTypes`, used by the dev loop to regenerate the renderer's types.
 typegen = ["dep:specta-serde", "dep:specta-typescript"]

@@ -1,4 +1,6 @@
-use crate::audio::device::device_display_name;
+use crate::audio::device::{device_display_name, DeviceManager};
+#[cfg(target_os = "macos")]
+use crate::audio::device::{device_transport, is_wireless, local_monitor_priority};
 use crate::error::AppError;
 use cpal::traits::{DeviceTrait, HostTrait};
 use serde::Serialize;
@@ -16,10 +18,15 @@ pub fn get_microphones() -> Result<Vec<Microphone>, AppError> {
     let mut microphones = Vec::new();
 
     let host = cpal::default_host();
-    let default_id = host
-        .default_input_device()
+    let default = host.default_input_device();
+    let default_id = default
+        .as_ref()
         .and_then(|device| device.id().ok())
         .map(|id| id.to_string());
+    #[cfg(target_os = "macos")]
+    let prefer_local = default
+        .as_ref()
+        .is_some_and(|device| is_wireless(device_transport(device)));
     let devices = host.devices()?;
     for device in devices {
         let Ok(config) = device.default_input_config() else {
@@ -29,13 +36,35 @@ pub fn get_microphones() -> Result<Vec<Microphone>, AppError> {
             continue;
         };
 
-        microphones.push(Microphone {
-            id: device.id().ok().map(|id| id.to_string()),
-            name: device_display_name(&description),
-            channels: config.channels(),
-        });
+        let id = device.id().ok().map(|id| id.to_string());
+        let rank = if id.is_some() && id == default_id {
+            0
+        } else {
+            1
+        };
+        #[cfg(target_os = "macos")]
+        let rank = if prefer_local {
+            local_monitor_priority(device_transport(&device)).unwrap_or(2 + rank)
+        } else {
+            rank
+        };
+        microphones.push((
+            rank,
+            Microphone {
+                id,
+                name: device_display_name(&description),
+                channels: config.channels(),
+            },
+        ));
     }
 
-    microphones.sort_by_key(|mic| default_id.is_none() || mic.id != default_id);
-    Ok(microphones)
+    microphones.sort_by_key(|(rank, _)| *rank);
+    Ok(microphones.into_iter().map(|(_, mic)| mic).collect())
+}
+
+pub fn get_monitor_output() -> Result<Option<String>, AppError> {
+    Ok(DeviceManager::new()?
+        .monitor_output()
+        .and_then(|device| device.id().ok())
+        .map(|id| id.to_string()))
 }

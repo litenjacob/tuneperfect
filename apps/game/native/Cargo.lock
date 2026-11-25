@@ -2623,6 +2623,8 @@ dependencies = [
  "napi-build",
  "napi-derive",
  "num_cpus",
+ "objc2-core-audio",
+ "objc2-core-foundation",
  "regex",
  "reqwest",
  "ringbuf",

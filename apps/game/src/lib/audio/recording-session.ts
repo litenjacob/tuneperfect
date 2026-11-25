@@ -1,4 +1,4 @@
-import { createEffect, createMemo, createRoot, createSignal } from "solid-js";
+import { batch, createEffect, createMemo, createRoot, createSignal } from "solid-js";
 
 import { native } from "~/lib/native/client";
 import type { MicrophoneOptions } from "~/lib/native/types.gen";
@@ -9,6 +9,7 @@ type Device = Awaited<ReturnType<typeof native.microphones.list>>[number];
 
 const [requests, setRequests] = createSignal<readonly (readonly Input[])[]>([]);
 const [devices, setDevices] = createSignal<Device[]>();
+const [monitorOutput, setMonitorOutput] = createSignal<string | null>();
 const [available, setAvailable] = createSignal(false);
 
 const sameInput = (a: Input, b: Input) =>
@@ -22,6 +23,7 @@ export function microphoneLevelSlot(input: Input, fallback: number) {
 const plan = createRoot(() =>
   createMemo(() => {
     if (!settingsInitialized()) return;
+    if (monitorOutput() === undefined) return;
     const enabled = settingsStore.general().micPlaybackEnabled;
     const configured = settingsStore.microphones();
     const levels = settings().mixer.microphones;
@@ -76,7 +78,7 @@ const plan = createRoot(() =>
       slots,
       enabled,
       master: settingsStore.volume().micPlayback,
-      key: JSON.stringify([keys, known?.map((device) => [device.id, device.name, device.channels])]),
+      key: JSON.stringify([keys, monitorOutput(), known?.map((device) => [device.id, device.name, device.channels])]),
     };
   }),
 );
@@ -132,8 +134,14 @@ async function refreshDevices() {
   if (refreshing) return;
   refreshing = true;
   try {
-    const next = await native.microphones.list();
-    if (JSON.stringify(next) !== JSON.stringify(devices())) setDevices(next);
+    const [next, output] = await Promise.all([
+      native.microphones.list(),
+      native.recording.monitorOutput().catch(() => null),
+    ]);
+    batch(() => {
+      if (JSON.stringify(next) !== JSON.stringify(devices())) setDevices(next);
+      setMonitorOutput(output);
+    });
     const first = next[0];
     if (first && !offeredDefault && !settingsStore.microphones().length) {
       settingsStore.saveMicrophone(0, {

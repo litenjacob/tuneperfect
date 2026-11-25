@@ -1,5 +1,7 @@
 pub mod analysis;
 pub mod clock;
+#[cfg(target_os = "macos")]
+mod coreaudio;
 pub mod device;
 pub mod input;
 pub mod output;

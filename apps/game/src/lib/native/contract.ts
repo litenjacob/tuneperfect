@@ -69,6 +69,7 @@ export const contract = {
     list: base.output(type<Microphone[]>()),
   },
   recording: {
+    monitorOutput: base.output(type<string | null>()),
     start: base
       .input(
         v.object({

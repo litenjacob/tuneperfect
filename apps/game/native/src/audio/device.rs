@@ -60,13 +60,34 @@ fn assign_mics(mics: &[MicrophoneOptions], devices: &[DeviceIdentity]) -> Vec<Op
         .collect()
 }
 
-/// Target buffer size (in frames) for input streams and, outside Linux, the playback stream.
-///
-/// Lower buffer sizes reduce monitoring latency but risk underruns. 256 frames
-/// (~5.3ms at 48kHz) is low enough to noticeably cut latency while staying safe
-/// across typical devices. It is always clamped to the device's supported range
-/// before use, so devices that can't go this low keep a valid (larger) buffer.
-const TARGET_BUFFER_SIZE: u32 = 256;
+/// Target buffer size for both directions, clamped to each device's supported range.
+const TARGET_BUFFER_SIZE: u32 = if cfg!(target_os = "macos") { 128 } else { 256 };
+
+#[cfg(target_os = "macos")]
+pub fn is_wireless(transport: Option<u32>) -> bool {
+    use objc2_core_audio::{
+        kAudioDeviceTransportTypeAirPlay as AIR_PLAY,
+        kAudioDeviceTransportTypeBluetooth as BLUETOOTH,
+        kAudioDeviceTransportTypeBluetoothLE as BLUETOOTH_LE,
+    };
+    matches!(transport, Some(AIR_PLAY | BLUETOOTH | BLUETOOTH_LE))
+}
+
+#[cfg(target_os = "macos")]
+pub fn local_monitor_priority(transport: Option<u32>) -> Option<u8> {
+    use objc2_core_audio::{
+        kAudioDeviceTransportTypeBuiltIn as BUILT_IN,
+        kAudioDeviceTransportTypeThunderbolt as THUNDERBOLT, kAudioDeviceTransportTypeUSB as USB,
+    };
+    match transport {
+        Some(BUILT_IN) => Some(0),
+        Some(USB | THUNDERBOLT) => Some(1),
+        _ => None,
+    }
+}
+
+#[cfg(target_os = "macos")]
+pub use super::coreaudio::transport as device_transport;
 
 /// Target buffer size (in frames) for the playback stream on Linux.
 ///
@@ -137,7 +158,43 @@ impl DeviceManager {
             .collect())
     }
 
-    /// Get the default output device configuration.
+    /// Prefer a local output to avoid Bluetooth/AirPlay buffering in live monitoring.
+    /// Leave the system default alone, as it also routes other apps and the song playback.
+    pub fn monitor_output(&self) -> Option<Device> {
+        let default = self.host.default_output_device();
+        #[cfg(target_os = "macos")]
+        if let Ok(outputs) = self.host.output_devices() {
+            let default_id = default.as_ref().and_then(|device| device.id().ok());
+            let prefer_local = default
+                .as_ref()
+                .is_some_and(|device| is_wireless(device_transport(device)));
+            let mut pinned_default = None;
+            let mut local = None;
+            for device in outputs {
+                if default_id
+                    .as_ref()
+                    .is_some_and(|id| device.id().as_ref().ok() == Some(id))
+                {
+                    pinned_default = Some(device);
+                } else if prefer_local {
+                    if let Some(priority) = local_monitor_priority(device_transport(&device)) {
+                        if local.as_ref().is_none_or(|(best, _)| priority < *best) {
+                            local = Some((priority, device));
+                        }
+                    }
+                }
+            }
+            // Enumerated handles are pinned by CPAL, so a macOS default-output
+            // change cannot silently reroute an active monitor onto Bluetooth.
+            return local
+                .map(|(_, device)| device)
+                .or(pinned_default)
+                .or(default);
+        }
+        default
+    }
+
+    /// Get the monitor output configuration.
     ///
     /// When `desired_sample_rate` is provided, we try to configure the output at
     /// that rate so it matches the input and the resampler can be bypassed. If
@@ -148,8 +205,7 @@ impl DeviceManager {
         desired_sample_rate: Option<u32>,
     ) -> Result<(Device, StreamConfig), AppError> {
         let output_device = self
-            .host
-            .default_output_device()
+            .monitor_output()
             .ok_or_else(|| AppError::CpalError("No output device available".to_string()))?;
 
         let supported_config = output_device.default_output_config()?;
@@ -157,7 +213,8 @@ impl DeviceManager {
         let mut config: StreamConfig = supported_config.into();
 
         // Try to match the desired (input) sample rate to avoid resampling.
-        if let Some(rate) = desired_sample_rate {
+        // CoreAudio's requested rate can alter the shared hardware format.
+        if let Some(rate) = desired_sample_rate.filter(|_| !cfg!(target_os = "macos")) {
             if rate != config.sample_rate && Self::supports_output_sample_rate(&output_device, rate)
             {
                 config.sample_rate = rate;

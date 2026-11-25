@@ -32,6 +32,7 @@ export function nativeProcedures({ songFolders }: NativeDependencies) {
       }),
     },
     recording: {
+      monitorOutput: os.recording.monitorOutput.handler(async () => (await native.getMonitorOutput()) ?? null),
       start: os.recording.start.handler(async ({ input }) => {
         await ensureMicrophoneAccess();
         return native.startRecording(

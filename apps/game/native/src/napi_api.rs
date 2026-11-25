@@ -95,6 +95,11 @@ pub async fn get_microphones() -> Result<Value> {
 }
 
 #[napi]
+pub async fn get_monitor_output() -> Result<Option<String>> {
+    blocking(microphones::get_monitor_output).await
+}
+
+#[napi]
 pub async fn start_recording(
     options: Value,
     playback_enabled: bool,
