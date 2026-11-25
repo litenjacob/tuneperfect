@@ -153,7 +153,10 @@ fn collect(
                 root_dirs.contains(&canonical) && Some(canonical.as_path()) != own_root
             })
             .unwrap_or(false);
-        if !is_other_root {
+        let is_app_bundle = subdir
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("app"));
+        if !is_other_root && !is_app_bundle {
             collect(&subdir, own_root, root_dirs, visited, scan);
         }
     }

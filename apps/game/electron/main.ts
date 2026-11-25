@@ -130,7 +130,11 @@ async function start() {
   migrateFromTauri(dataDir, logger);
   cleanUpAfterTauri(logger);
   const stores = new JsonStores(dataDir);
-  const songPaths = songPathArgs(process.argv);
+  // A packaged copy parked in a songs folder can use that collection immediately.
+  const adjacent =
+    app.isPackaged && process.platform === "darwin" ? path.resolve(process.resourcesPath, "../../..") : undefined;
+  const songPaths =
+    songPathArgs(process.argv) ?? (adjacent && path.basename(adjacent).toLowerCase() === "songs" ? [adjacent] : null);
   const songFolders = await SongFolders.atStartup(stores, songPaths ?? []);
 
   // Without it YouTube songs can't play, but everything else still works.
