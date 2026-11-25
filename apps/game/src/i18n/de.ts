@@ -174,6 +174,18 @@ const de = {
     bonus: "Bonus",
   },
   game: {
+    mixer: {
+      title: "Tonmischer",
+      close: "Tonmischer schließen",
+      channels: "Mischpultkanäle",
+      vocals: "Originalgesang",
+      mic: "Mikro {{number}}",
+      select: "Auswählen",
+      adjust: "Anpassen",
+      vocalsUnavailable: "Begleitspur nicht verfügbar",
+      micOff: "Wiedergabe aus · Pegel ändern zum Aktivieren",
+      micUnavailable: "Mikrofonwiedergabe nicht verfügbar",
+    },
     pause: {
       resume: "Fortsetzen",
       micPlayback: "Mikrofon-Wiedergabe",

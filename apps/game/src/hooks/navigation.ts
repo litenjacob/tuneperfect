@@ -163,7 +163,8 @@ const getKeyInfo = (event: KeyboardEvent): { keyString: string; modifiers: strin
 
 /** Keys that text fields handle themselves while focused. */
 const isInputPassthrough = (event: KeyboardEvent) =>
-  (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) &&
+  ((event.target instanceof HTMLInputElement && event.target.type !== "range") ||
+    event.target instanceof HTMLTextAreaElement) &&
   (isPrintableKey(event.key) || ["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(event.key));
 
 /** An event plus the physical press it belongs to, so listeners can pair keyups with their keydowns. */

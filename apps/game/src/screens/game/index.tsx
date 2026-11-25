@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/solid-router";
 import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show, untrack } from "solid-js";
 
 import GameLayout from "~/components/game/game-layout";
+import LiveMixer, { type MixChannel } from "~/components/game/live-mixer";
 import Lyrics from "~/components/game/lyrics";
 import PauseMenu from "~/components/game/pause-menu";
 import PlayerLane from "~/components/game/player-lane";
@@ -11,17 +12,23 @@ import OnlineSongPlayer from "~/components/online-song-player";
 import type { SongPlayerRef } from "~/components/song-player";
 import SongPlayer from "~/components/song-player";
 import { useNavigation } from "~/hooks/navigation";
+import { MAX_MIC_PLAYBACK_GAIN } from "~/lib/audio/mic-playback";
+import { microphoneLevelSlot } from "~/lib/audio/recording-session";
 import { createGame } from "~/lib/game/game";
 import { t } from "~/lib/i18n";
 import { notify } from "~/lib/toast";
 import { isLocalSong, isUsdbSong } from "~/lib/ultrastar/song";
 import { isPartyRound, roundStore, useRoundActions } from "~/stores/round";
-import { settingsStore } from "~/stores/settings";
+import { settings, settingsStore, updateSettings } from "~/stores/settings";
 import { songsStore } from "~/stores/songs";
 
 export default function GameScreen() {
   const navigate = useNavigate();
   const [songPlayerRef, setSongPlayerRef] = createSignal<SongPlayerRef>();
+  const [vocalMixAvailable, setVocalMixAvailable] = createSignal(false);
+  const [mixerOpen, setMixerOpen] = createSignal(false);
+  const [mixerSlot, setMixerSlot] = createSignal<MixChannel["slot"]>(0);
+  let mixerTimeout: ReturnType<typeof setTimeout> | undefined;
   const [ready, setReady] = createSignal(false);
   const [canPlayThrough, setCanPlayThrough] = createSignal(false);
   const roundActions = useRoundActions();
@@ -74,15 +81,107 @@ export default function GameScreen() {
 
   const paused = () => !playing() && started();
 
+  const players = createMemo(() => roundSong()?.players || []);
+  const mixerChannels = createMemo<MixChannel[]>(() => [
+    ...players().flatMap((player, slot): MixChannel[] =>
+      player
+        ? [
+            {
+              slot,
+              label: t("game.mixer.mic", { number: slot + 1 }),
+              level: Math.round(
+                (settings().mixer.microphones[microphoneLevelSlot(player.microphone, slot)] ?? 1) * 100,
+              ),
+              max: MAX_MIC_PLAYBACK_GAIN * 100,
+              adjustable: true,
+              status: micPlaybackAvailable()
+                ? settingsStore.general().micPlaybackEnabled
+                  ? undefined
+                  : t("game.mixer.micOff")
+                : t("game.mixer.micUnavailable"),
+            },
+          ]
+        : [],
+    ),
+    {
+      slot: "vocals",
+      label: t("game.mixer.vocals"),
+      level: Math.round(settings().mixer.vocals * 100),
+      max: 100,
+      adjustable: vocalMixAvailable(),
+      status: vocalMixAvailable() ? undefined : t("game.mixer.vocalsUnavailable"),
+    },
+  ]);
+  const selectedMixerChannel = () =>
+    mixerChannels().find((channel) => channel.slot === mixerSlot()) ?? mixerChannels()[0]!;
+
+  const showMixer = () => {
+    setMixerOpen(true);
+    clearTimeout(mixerTimeout);
+    mixerTimeout = setTimeout(() => setMixerOpen(false), 5500);
+  };
+  const closeMixer = () => {
+    clearTimeout(mixerTimeout);
+    setMixerOpen(false);
+  };
+  onCleanup(closeMixer);
+  createEffect(() => {
+    if (playing()) showMixer();
+    else closeMixer();
+  });
+
+  const selectMixer = (direction: number) => {
+    const channels = mixerChannels();
+    const current = channels.indexOf(selectedMixerChannel());
+    const next = channels[current + direction];
+    if (next) setMixerSlot(next.slot);
+    showMixer();
+  };
+  const setMixerLevel = (channel: MixChannel, level: number) => {
+    showMixer();
+    if (!channel.adjustable) return;
+    const value = Math.min(channel.max, Math.max(0, level)) / 100;
+    if (channel.slot === "vocals") {
+      updateSettings("mixer", "vocals", value);
+      return;
+    }
+    const slot = microphoneLevelSlot(players()[channel.slot]?.microphone, channel.slot);
+    updateSettings("mixer", "microphones", (levels) =>
+      Array.from({ length: Math.max(slot + 1, levels.length) }, (_, index) =>
+        index === slot ? value : (levels[index] ?? 1),
+      ),
+    );
+    if (value > 0 && micPlaybackAvailable() && !settingsStore.general().micPlaybackEnabled) {
+      updateSettings("general", "micPlaybackEnabled", true);
+    }
+  };
+
+  const adjustMixer = (direction: number) => {
+    const channel = selectedMixerChannel();
+    setMixerLevel(channel, channel.level + direction * 5);
+  };
+
   useNavigation(() => ({
     layer: 0,
-    actions: started()
+    actions: playing()
       ? {
           back: pause,
           skip,
-          instrumental: () => setPreferInstrumental((value) => !value),
+          left: { down: () => selectMixer(-1), repeat: () => selectMixer(-1) },
+          right: { down: () => selectMixer(1), repeat: () => selectMixer(1) },
+          up: { down: () => adjustMixer(1), repeat: () => adjustMixer(1) },
+          down: { down: () => adjustMixer(-1), repeat: () => adjustMixer(-1) },
+          instrumental: () => {
+            if (vocalMixAvailable()) {
+              updateSettings("mixer", "vocals", (value) => (value > 0 ? 0 : 1));
+              setMixerSlot("vocals");
+              showMixer();
+            } else {
+              setPreferInstrumental((value) => !value);
+            }
+          },
         }
-      : { back: null, skip: null, instrumental: null },
+      : {},
   }));
 
   createEffect(() => {
@@ -154,7 +253,6 @@ export default function GameScreen() {
     roundActions.failRound();
   };
 
-  const players = createMemo(() => roundSong()?.players || []);
   const playerCount = createMemo(() => players().length);
 
   const useQuadLayout = createMemo(() => playerCount() >= 3);
@@ -201,6 +299,8 @@ export default function GameScreen() {
                         onEnded={handleEnded}
                         onError={handleError}
                         preferInstrumental={preferInstrumental()}
+                        vocalLevel={settings().mixer.vocals}
+                        onVocalMixAvailable={setVocalMixAvailable}
                         mode="play"
                         useFades={roundSong()?.length !== "full"}
                       />
@@ -242,6 +342,20 @@ export default function GameScreen() {
 
                   <div class="relative z-10" classList={{ "h-10": !useQuadLayout(), "h-7": useQuadLayout() }}>
                     <Progress />
+                    <Show when={playing()}>
+                      <LiveMixer
+                        open={mixerOpen()}
+                        channels={mixerChannels()}
+                        selected={selectedMixerChannel().slot}
+                        onSelect={(slot) => {
+                          setMixerSlot(slot);
+                          showMixer();
+                        }}
+                        onLevel={setMixerLevel}
+                        onToggle={() => (mixerOpen() ? closeMixer() : showMixer())}
+                        onActivity={showMixer}
+                      />
+                    </Show>
                   </div>
 
                   <div class="flex grow flex-col" style={{ flex: useQuadLayout() ? 2 : 1 }}>

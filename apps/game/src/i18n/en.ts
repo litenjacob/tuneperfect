@@ -172,6 +172,18 @@ const en = {
     bonus: "Bonus",
   },
   game: {
+    mixer: {
+      title: "Sound mixer",
+      close: "Close sound mixer",
+      channels: "Mixer channels",
+      vocals: "Original vocals",
+      mic: "Mic {{number}}",
+      select: "Select",
+      adjust: "Adjust",
+      vocalsUnavailable: "Backing track unavailable",
+      micOff: "Monitoring off · adjust to enable",
+      micUnavailable: "Microphone monitoring unavailable",
+    },
     pause: {
       resume: "Resume",
       micPlayback: "Mic Playback",

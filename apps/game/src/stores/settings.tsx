@@ -25,7 +25,7 @@ const defaultSettings: SettingsStore = {
     micPlayback: 1,
     effects: 0.5,
   },
-  mixer: { microphones: [] },
+  mixer: { vocals: 1, microphones: [] },
   microphones: [],
   songs: {
     paths: [],

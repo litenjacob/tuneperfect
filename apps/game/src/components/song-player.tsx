@@ -1,7 +1,19 @@
 import { createEventListener } from "@solid-primitives/event-listener";
-import { createEffect, createMemo, createSignal, type JSX, on, onCleanup, onMount, type Ref, Show } from "solid-js";
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  type JSX,
+  on,
+  onCleanup,
+  onMount,
+  type Ref,
+  Show,
+  untrack,
+} from "solid-js";
 
 import { getAudioContext } from "~/lib/audio/context";
+import { connectVocalMix } from "~/lib/audio/vocal-mix";
 import { platform } from "~/lib/desktop";
 import { t } from "~/lib/i18n";
 import { PlaybackClock, STEPPED_SOURCE } from "~/lib/media/playback-clock";
@@ -30,6 +42,8 @@ interface SongPlayerProps {
   mode?: "play" | "preview";
   useFades?: boolean;
   preferInstrumental?: boolean;
+  vocalLevel?: number;
+  onVocalMixAvailable?: (available: boolean) => void;
   /**
    * Report a smoothed time: an audio element's position stalls for a frame and then jumps, which a
    * scrolling lane shows as judder and which would place pitch frames unevenly in song time.
@@ -92,6 +106,12 @@ export default function SongPlayer(props: SongPlayerProps) {
   const [currentVideoUrl, setCurrentVideoUrl] = createSignal<string | undefined>();
   const [preservedTime, setPreservedTime] = createSignal<number | undefined>();
 
+  const [failedVocalMix, setFailedVocalMix] = createSignal<string>();
+  const preparedUrl = createMemo(() => {
+    const url = props.song?.vocalMixUrl;
+    return url && props.vocalLevel !== undefined && url !== failedVocalMix() ? url : undefined;
+  });
+  const [vocalMix, setVocalMix] = createSignal<ReturnType<typeof connectVocalMix>>();
   let syncTimeout: ReturnType<typeof setTimeout> | undefined;
   let endCheckInterval: ReturnType<typeof setInterval> | undefined;
   let fadeOutTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -129,7 +149,6 @@ export default function SongPlayer(props: SongPlayerProps) {
     try {
       localAudioSource = audioContext.createMediaElementSource(audio);
       localGainNode = audioContext.createGain();
-      localAudioSource.connect(localGainNode);
       localGainNode.connect(audioContext.destination);
 
       audioSource = localAudioSource;
@@ -141,6 +160,25 @@ export default function SongPlayer(props: SongPlayerProps) {
         song?.replayGainTrackPeak ?? null,
       );
       localGainNode.gain.value = (props.volume ?? 1) * replayGainAdjustment;
+
+      const source = localAudioSource;
+      const output = localGainNode;
+      createEffect(() => {
+        const packed = preparedUrl();
+        if (packed && packed === currentAudioUrl()) {
+          const mix = connectVocalMix(
+            source,
+            output,
+            untrack(() => props.vocalLevel ?? 1),
+          );
+          setVocalMix(mix);
+          onCleanup(() => mix.disconnect());
+        } else {
+          setVocalMix(undefined);
+          source.connect(output);
+          onCleanup(() => source.disconnect(output));
+        }
+      });
     } catch (error) {
       console.warn("Failed to create audio source:", error);
       try {
@@ -151,6 +189,7 @@ export default function SongPlayer(props: SongPlayerProps) {
       }
       audioSource = undefined;
       currentGainNode = undefined;
+      setFailedVocalMix(preparedUrl());
     }
   });
 
@@ -165,18 +204,25 @@ export default function SongPlayer(props: SongPlayerProps) {
     currentGainNode.gain.setValueAtTime(volume * adjustment, audioContext.currentTime);
   });
 
+  createEffect(() => {
+    vocalMix()?.setLevel(props.vocalLevel ?? 1);
+  });
+  createEffect(() => {
+    props.onVocalMixAvailable?.(!!vocalMix() && audioReady());
+  });
+
   // Audio src management
   createEffect(() => {
     const song = props.song;
     const audioUrl = song?.audioUrl;
     const instrumentalUrl = song?.instrumentalUrl;
-    const newUrl = (props.preferInstrumental && instrumentalUrl) || audioUrl || undefined;
-    const currentUrl = currentAudioUrl();
+    const newUrl = preparedUrl() || (props.preferInstrumental && instrumentalUrl) || audioUrl || undefined;
+    const currentUrl = untrack(currentAudioUrl);
     const audio = audioElementRef;
 
     if (newUrl === currentUrl) return;
 
-    const wasPlaying = audio && !audio.paused;
+    const wasPlaying = untrack(isCurrentlyPlaying) || (audio && !audio.paused);
     const currentTime = audio?.currentTime ?? 0;
 
     setCurrentAudioUrl(newUrl);
@@ -196,7 +242,7 @@ export default function SongPlayer(props: SongPlayerProps) {
 
       const restorePlayback = () => {
         audio.currentTime = currentTime;
-        if (wasPlaying) {
+        if (wasPlaying && props.playing) {
           audio.play().catch((error) => console.warn("Failed to resume playback after track switch:", error));
         }
         audio.removeEventListener("canplaythrough", restorePlayback);
@@ -205,6 +251,7 @@ export default function SongPlayer(props: SongPlayerProps) {
       };
 
       audio.addEventListener("canplaythrough", restorePlayback, { once: true });
+      onCleanup(() => audio.removeEventListener("canplaythrough", restorePlayback));
     }
   });
 
@@ -564,6 +611,13 @@ export default function SongPlayer(props: SongPlayerProps) {
     const errorMessage = getMediaErrorMessage(audioEl);
 
     if (!currentAudioUrl()) return;
+
+    const prepared = preparedUrl();
+    if (prepared && currentAudioUrl() === prepared) {
+      console.warn("Vocal mix unavailable, playing original audio:", errorMessage);
+      setFailedVocalMix(prepared);
+      return;
+    }
 
     console.error("Failed to play audio:", errorMessage);
     props.onError?.();

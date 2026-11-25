@@ -1,6 +1,6 @@
 import * as v from "valibot";
 
-import { micPlaybackVolumeSchema } from "~/lib/audio/mic-playback";
+import { micPlaybackVolumeSchema, mixLevelSchema } from "~/lib/audio/mic-playback";
 
 const microphoneSchema = v.object({
   // Stable device ID (cpal `DeviceId`). Optional so configs saved before ID
@@ -58,6 +58,7 @@ export const settingsStoreSchema = v.object({
     effects: v.fallback(v.number(), 0.5),
   }),
   mixer: section({
+    vocals: v.fallback(mixLevelSchema, 1),
     microphones: v.fallback(v.array(v.fallback(micPlaybackVolumeSchema, 1)), []),
   }),
   microphones: validItems(microphoneSchema),
