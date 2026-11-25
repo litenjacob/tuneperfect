@@ -11,6 +11,7 @@ export type LocalSong = {
 	/**  The folder the song file is in, exactly as rescans name it (`SongDirGroup::dir`). */
 	songDir: string,
 	audioUrl: string | null,
+	vocalMixUrl?: string | null,
 	instrumentalUrl: string | null,
 	videoUrl: string | null,
 	coverUrl: string | null,

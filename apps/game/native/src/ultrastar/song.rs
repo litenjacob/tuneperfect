@@ -88,6 +88,9 @@ pub struct LocalSong {
     pub song_dir: String,
     #[serde(rename = "audioUrl")]
     pub audio_url: Option<String>,
+    #[serde(rename = "vocalMixUrl", default)]
+    #[specta(optional)]
+    pub vocal_mix_url: Option<String>,
     #[serde(rename = "instrumentalUrl")]
     pub instrumental_url: Option<String>,
     #[serde(rename = "videoUrl")]

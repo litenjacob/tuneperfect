@@ -417,6 +417,13 @@ pub fn parse_local_txt_file(
         );
     }
 
+    let vocal_mix = audio_file.and_then(|audio| {
+        let mix = find_file(&Some(format!("{}.tuneperfect-mix.flac", audio.filename)))?;
+        let source_time = fs::metadata(&audio.path).ok()?.modified().ok()?;
+        let mix_metadata = fs::metadata(&mix.path).ok()?;
+        (mix_metadata.len() > 42 && mix_metadata.modified().ok()? >= source_time).then_some(mix)
+    });
+    let vocal_mix_url = create_url_from_file(vocal_mix)?;
     let audio_url = create_url_from_file(audio_file)?;
     let instrumental_url = create_url_from_file(instrumental_file)?;
     let video_url = create_url_from_file(video_file)?;
@@ -447,6 +454,7 @@ pub fn parse_local_txt_file(
         song_dir: song_dir.to_string(),
         audio_url,
         instrumental_url,
+        vocal_mix_url,
         video_url,
         cover_url,
         background_url,
