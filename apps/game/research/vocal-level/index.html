@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TunePerfect Vocal Level</title>
+    <style>
+      body {
+        max-width: 390px;
+        margin: 48px auto;
+        padding: 0 20px;
+        font: 16px system-ui;
+      }
+      audio,
+      input {
+        width: 100%;
+      }
+      .level {
+        display: flex;
+        justify-content: space-between;
+        margin: 24px 0 8px;
+      }
+      :root {
+        color-scheme: dark light;
+      }
+    </style>
+    <script src="/renderer.js" defer></script>
+  </head>
+  <body>
+    <h1>Original vocals</h1>
+    <audio controls preload="auto" crossorigin="anonymous"></audio>
+    <div class="level">
+      <label for="vocals">Vocal level</label>
+      <output id="level" for="vocals">100%</output>
+    </div>
+    <input id="vocals" type="range" min="0" max="100" value="100" />
+    <p id="error" role="status"></p>
+  </body>
+</html>

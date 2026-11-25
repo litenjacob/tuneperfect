@@ -1,0 +1,1134 @@
+{
+  "hardware": {
+    "chip": "Apple M4",
+    "memoryGiB": 32,
+    "macOS": "27.0.1",
+    "mlx": "0.32.4",
+    "mlxAudioSeparator": "0.1.20"
+  },
+  "fullSong": [
+    {
+      "model": "demucs",
+      "load_s": 8.030913750000764
+    },
+    {
+      "model": "demucs",
+      "track": "nightowl",
+      "repeat": 1,
+      "audio_s": 171.4401814058957,
+      "separate_s": 17.44201458399766,
+      "x_realtime": 9.829150215433547,
+      "mlx_peak_bytes": 3369835028,
+      "est_peak": 0.4591064453125,
+      "backing_sdr_db": 19.05851285091551,
+      "vocal_attenuation_db": 18.149730682373047,
+      "backing_gain_db": -0.13359296321868896
+    },
+    {
+      "model": "demucs",
+      "track": "nightowl",
+      "repeat": 2,
+      "audio_s": 171.4401814058957,
+      "separate_s": 13.038589000003412,
+      "x_realtime": 13.148675934631486,
+      "mlx_peak_bytes": 3425950216,
+      "est_peak": 0.4591064453125,
+      "backing_sdr_db": 19.05851285091551,
+      "vocal_attenuation_db": 18.149730682373047,
+      "backing_gain_db": -0.13359296321868896,
+      "pack_gain": 0.9989085471911141,
+      "pack_s": 0.921737791999476,
+      "pack_bytes": 61840903
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "load_s": 3.36344950000057
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "nightowl",
+      "repeat": 1,
+      "audio_s": 171.4401814058957,
+      "separate_s": 10.243326625000918,
+      "x_realtime": 16.736768013182466,
+      "mlx_peak_bytes": 3344380436,
+      "est_peak": 0.442317932844162,
+      "backing_sdr_db": 19.390512337916768,
+      "vocal_attenuation_db": 19.034236907958984,
+      "backing_gain_db": -0.12174026668071747
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "nightowl",
+      "repeat": 2,
+      "audio_s": 171.4401814058957,
+      "separate_s": 11.46864295800333,
+      "x_realtime": 14.94860220461019,
+      "mlx_peak_bytes": 3344396824,
+      "est_peak": 0.442317932844162,
+      "backing_sdr_db": 19.390512337916768,
+      "vocal_attenuation_db": 19.034236907958984,
+      "backing_gain_db": -0.12174026668071747,
+      "pack_gain": 1.0,
+      "pack_s": 0.6098911250010133,
+      "pack_bytes": 46823126
+    },
+    {
+      "model": "mdx",
+      "load_s": 1.2935761249973439
+    },
+    {
+      "model": "mdx",
+      "track": "nightowl",
+      "repeat": 1,
+      "audio_s": 171.4401814058957,
+      "separate_s": 35.80824479201692,
+      "x_realtime": 4.78772926184074,
+      "mlx_peak_bytes": 1979147724,
+      "est_peak": 0.9757440686225891,
+      "backing_sdr_db": 17.900789986634084,
+      "vocal_attenuation_db": 19.355321884155273,
+      "backing_gain_db": -0.3817681074142456
+    },
+    {
+      "model": "mdx",
+      "track": "nightowl",
+      "repeat": 2,
+      "audio_s": 171.4401814058957,
+      "separate_s": 33.64919858300709,
+      "x_realtime": 5.09492613867105,
+      "mlx_peak_bytes": 1979147676,
+      "est_peak": 0.9757440686225891,
+      "backing_sdr_db": 17.900789986634084,
+      "vocal_attenuation_db": 19.355321884155273,
+      "backing_gain_db": -0.3817681074142456,
+      "pack_gain": 1.0,
+      "pack_s": 0.5718931669835001,
+      "pack_bytes": 47377753
+    },
+    {
+      "model": "roformer",
+      "load_s": 1.7990932500106283
+    },
+    {
+      "model": "roformer",
+      "track": "nightowl",
+      "repeat": 1,
+      "audio_s": 171.4401814058957,
+      "separate_s": 114.70766041698516,
+      "x_realtime": 1.494583542046595,
+      "mlx_peak_bytes": 2647844308,
+      "est_peak": 0.5485081076622009,
+      "backing_sdr_db": 20.792475863776268,
+      "vocal_attenuation_db": 20.948650360107422,
+      "backing_gain_db": -0.04335051029920578
+    },
+    {
+      "model": "roformer",
+      "track": "nightowl",
+      "repeat": 2,
+      "audio_s": 171.4401814058957,
+      "separate_s": 136.40449308400275,
+      "x_realtime": 1.2568514242438973,
+      "mlx_peak_bytes": 2746705352,
+      "est_peak": 0.5485081076622009,
+      "backing_sdr_db": 20.792475863776268,
+      "vocal_attenuation_db": 20.948650360107422,
+      "backing_gain_db": -0.04335051029920578
+    }
+  ],
+  "excerpts": [
+    {
+      "model": "demucs",
+      "load_s": 2.86440170800779
+    },
+    {
+      "model": "demucs",
+      "track": "Al James - Schoolboy Facination.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.8153527920076158,
+      "x_realtime": 8.344175403221767,
+      "mlx_peak_bytes": 3036653824,
+      "est_peak": 0.56378173828125,
+      "backing_sdr_db": 10.530028236168906,
+      "vocal_attenuation_db": 20.47682762145996,
+      "backing_gain_db": -0.9413630962371826
+    },
+    {
+      "model": "demucs",
+      "track": "BKS - Too Much.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7189303330087569,
+      "x_realtime": 9.463290668993475,
+      "mlx_peak_bytes": 2917390360,
+      "est_peak": 0.387298583984375,
+      "backing_sdr_db": 14.91941547054939,
+      "vocal_attenuation_db": 23.730430603027344,
+      "backing_gain_db": -0.307137131690979
+    },
+    {
+      "model": "demucs",
+      "track": "Carlos Gonzalez - A Place For Us.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7340190839895513,
+      "x_realtime": 9.268759982424363,
+      "mlx_peak_bytes": 2913261592,
+      "est_peak": 0.44561767578125,
+      "backing_sdr_db": 7.15767245171854,
+      "vocal_attenuation_db": 12.167684555053711,
+      "backing_gain_db": -1.0211553573608398
+    },
+    {
+      "model": "demucs",
+      "track": "Forkupines - Semantics.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.6655527919938322,
+      "x_realtime": 10.222249525295641,
+      "mlx_peak_bytes": 2974128152,
+      "est_peak": 0.426239013671875,
+      "backing_sdr_db": 12.416456920191036,
+      "vocal_attenuation_db": 19.43467903137207,
+      "backing_gain_db": -0.529828667640686
+    },
+    {
+      "model": "demucs",
+      "track": "James Elder & Mark M Thompson - The English Actor.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.6806070420134347,
+      "x_realtime": 9.99614504706204,
+      "mlx_peak_bytes": 2917390360,
+      "est_peak": 0.661834716796875,
+      "backing_sdr_db": 8.216822774915197,
+      "vocal_attenuation_db": 10.544437408447266,
+      "backing_gain_db": -0.5136110186576843
+    },
+    {
+      "model": "demucs",
+      "track": "Lyndsey Ollard - Catching Up.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.6751153749937657,
+      "x_realtime": 10.07745781538595,
+      "mlx_peak_bytes": 2974128152,
+      "est_peak": 0.664276123046875,
+      "backing_sdr_db": 12.229877128199327,
+      "vocal_attenuation_db": 21.209671020507812,
+      "backing_gain_db": -0.1777835339307785
+    },
+    {
+      "model": "demucs",
+      "track": "Mu - Too Bright.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.66652850000537,
+      "x_realtime": 10.207285527870642,
+      "mlx_peak_bytes": 2974128152,
+      "est_peak": 0.385009765625,
+      "backing_sdr_db": 18.34432130976846,
+      "vocal_attenuation_db": 29.859588623046875,
+      "backing_gain_db": -0.12884363532066345
+    },
+    {
+      "model": "demucs",
+      "track": "Punkdisco - Oral Hygiene.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7262127920112107,
+      "x_realtime": 9.368392827639855,
+      "mlx_peak_bytes": 2913261592,
+      "est_peak": 0.42279052734375,
+      "backing_sdr_db": 17.877126185113877,
+      "vocal_attenuation_db": 20.912275314331055,
+      "backing_gain_db": -0.12443198263645172
+    },
+    {
+      "model": "demucs",
+      "track": "Secretariat - Over The Top.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.8004595839884132,
+      "x_realtime": 8.49942564010405,
+      "mlx_peak_bytes": 2917390360,
+      "est_peak": 0.415191650390625,
+      "backing_sdr_db": 17.271923400997615,
+      "vocal_attenuation_db": 21.516969680786133,
+      "backing_gain_db": -0.18594413995742798
+    },
+    {
+      "model": "demucs",
+      "track": "Speak Softly - Broken Man.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7024404999974649,
+      "x_realtime": 9.68544198696216,
+      "mlx_peak_bytes": 2913261592,
+      "est_peak": 0.22467041015625,
+      "backing_sdr_db": 16.704018190287414,
+      "vocal_attenuation_db": 13.411334991455078,
+      "backing_gain_db": -0.18581929802894592
+    },
+    {
+      "model": "demucs",
+      "track": "The Easton Ellises - Falcon 69.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.6878632500011008,
+      "x_realtime": 9.890696605767575,
+      "mlx_peak_bytes": 2913261592,
+      "est_peak": 0.31927490234375,
+      "backing_sdr_db": 7.593208305626349,
+      "vocal_attenuation_db": 5.127470970153809,
+      "backing_gain_db": -0.2927549481391907
+    },
+    {
+      "model": "demucs",
+      "track": "Timboz - Pony.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7826234590029344,
+      "x_realtime": 8.69312903127867,
+      "mlx_peak_bytes": 2913261592,
+      "est_peak": 0.333892822265625,
+      "backing_sdr_db": 15.037212880211904,
+      "vocal_attenuation_db": 11.434645652770996,
+      "backing_gain_db": -0.24842402338981628
+    },
+    {
+      "model": "demucs",
+      "track": "Zeno - Signs.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7517237919964828,
+      "x_realtime": 9.05046080016844,
+      "mlx_peak_bytes": 2885736472,
+      "est_peak": 0.393096923828125,
+      "backing_sdr_db": 10.98039208481871,
+      "vocal_attenuation_db": 15.991724014282227,
+      "backing_gain_db": -0.5750550627708435
+    },
+    {
+      "model": "mdx",
+      "load_s": 0.33229870902141556
+    },
+    {
+      "model": "mdx",
+      "track": "Al James - Schoolboy Facination.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 2.846195042016916,
+      "x_realtime": 2.390365597431782,
+      "mlx_peak_bytes": 1924069148,
+      "est_peak": 0.34673216938972473,
+      "backing_sdr_db": 8.283175059656088,
+      "vocal_attenuation_db": 24.668901443481445,
+      "backing_gain_db": -3.616441249847412
+    },
+    {
+      "model": "mdx",
+      "track": "BKS - Too Much.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.4224524589953944,
+      "x_realtime": 1.9878864041299735,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.3597623407840729,
+      "backing_sdr_db": 8.231113938422938,
+      "vocal_attenuation_db": 30.046043395996094,
+      "backing_gain_db": -4.090470790863037
+    },
+    {
+      "model": "mdx",
+      "track": "Carlos Gonzalez - A Place For Us.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.5740657499991357,
+      "x_realtime": 1.9035594720158089,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.8221246600151062,
+      "backing_sdr_db": 8.70869471702804,
+      "vocal_attenuation_db": 17.63725471496582,
+      "backing_gain_db": -1.299211859703064
+    },
+    {
+      "model": "mdx",
+      "track": "Forkupines - Semantics.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.3395641669922043,
+      "x_realtime": 2.0372259288390016,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.772532045841217,
+      "backing_sdr_db": 13.164867889344254,
+      "vocal_attenuation_db": 21.90460205078125,
+      "backing_gain_db": -1.0467808246612549
+    },
+    {
+      "model": "mdx",
+      "track": "James Elder & Mark M Thompson - The English Actor.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.3468858329870272,
+      "x_realtime": 2.0327692821079,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.6584671139717102,
+      "backing_sdr_db": 10.550872360003217,
+      "vocal_attenuation_db": 16.69607925415039,
+      "backing_gain_db": -1.3037115335464478
+    },
+    {
+      "model": "mdx",
+      "track": "Lyndsey Ollard - Catching Up.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.1652270829945337,
+      "x_realtime": 2.149434000666261,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.5413647890090942,
+      "backing_sdr_db": 11.188253793824536,
+      "vocal_attenuation_db": 25.243976593017578,
+      "backing_gain_db": -1.9864963293075562
+    },
+    {
+      "model": "mdx",
+      "track": "Mu - Too Bright.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.2300004579883534,
+      "x_realtime": 2.1063299527379424,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.8918240070343018,
+      "backing_sdr_db": 17.899121607373722,
+      "vocal_attenuation_db": 37.83620071411133,
+      "backing_gain_db": -0.757567822933197
+    },
+    {
+      "model": "mdx",
+      "track": "Punkdisco - Oral Hygiene.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.563167540996801,
+      "x_realtime": 1.9093816481373949,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.3814058005809784,
+      "backing_sdr_db": 8.579288915594741,
+      "vocal_attenuation_db": 29.884538650512695,
+      "backing_gain_db": -3.6971209049224854
+    },
+    {
+      "model": "mdx",
+      "track": "Secretariat - Over The Top.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.7456928749743383,
+      "x_realtime": 1.8163386425708357,
+      "mlx_peak_bytes": 1926231600,
+      "est_peak": 0.6226067543029785,
+      "backing_sdr_db": 12.41359737200144,
+      "vocal_attenuation_db": 26.41960906982422,
+      "backing_gain_db": -2.167445659637451
+    },
+    {
+      "model": "mdx",
+      "track": "Speak Softly - Broken Man.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.1859802500111982,
+      "x_realtime": 2.1354327956032457,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.6711049675941467,
+      "backing_sdr_db": 14.485121168406245,
+      "vocal_attenuation_db": 22.526580810546875,
+      "backing_gain_db": -1.6302947998046875
+    },
+    {
+      "model": "mdx",
+      "track": "The Easton Ellises - Falcon 69.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.74837341698003,
+      "x_realtime": 1.8150397399572602,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.7030276656150818,
+      "backing_sdr_db": 8.962066998823499,
+      "vocal_attenuation_db": 8.843476295471191,
+      "backing_gain_db": -1.3423399925231934
+    },
+    {
+      "model": "mdx",
+      "track": "Timboz - Pony.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.19636195799103,
+      "x_realtime": 2.1284969604300468,
+      "mlx_peak_bytes": 1924052716,
+      "est_peak": 0.48234349489212036,
+      "backing_sdr_db": 12.084163456192456,
+      "vocal_attenuation_db": 14.35063362121582,
+      "backing_gain_db": -2.0203914642333984
+    },
+    {
+      "model": "mdx",
+      "track": "Zeno - Signs.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 3.765040958998725,
+      "x_realtime": 1.807004700907012,
+      "mlx_peak_bytes": 1926231600,
+      "est_peak": 0.47186702489852905,
+      "backing_sdr_db": 9.322626106552654,
+      "vocal_attenuation_db": 23.860828399658203,
+      "backing_gain_db": -3.1437149047851562
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "load_s": 0.7317041660135146
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Al James - Schoolboy Facination.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.8864371250092518,
+      "x_realtime": 7.675047129763583,
+      "mlx_peak_bytes": 3011295488,
+      "est_peak": 0.5715737342834473,
+      "backing_sdr_db": 10.58838165331931,
+      "vocal_attenuation_db": 20.118404388427734,
+      "backing_gain_db": -0.8377374410629272
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "BKS - Too Much.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.6779923330177553,
+      "x_realtime": 10.034695645798655,
+      "mlx_peak_bytes": 2892064792,
+      "est_peak": 0.38770899176597595,
+      "backing_sdr_db": 15.039429187413766,
+      "vocal_attenuation_db": 23.54962158203125,
+      "backing_gain_db": -0.2768714725971222
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Carlos Gonzalez - A Place For Us.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.755621832999168,
+      "x_realtime": 9.003772012534784,
+      "mlx_peak_bytes": 2892064792,
+      "est_peak": 0.507472813129425,
+      "backing_sdr_db": 7.492299976944575,
+      "vocal_attenuation_db": 13.262735366821289,
+      "backing_gain_db": -1.0446938276290894
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Forkupines - Semantics.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7694025830132887,
+      "x_realtime": 8.842505681970962,
+      "mlx_peak_bytes": 2887903256,
+      "est_peak": 0.42603427171707153,
+      "backing_sdr_db": 12.702126076989597,
+      "vocal_attenuation_db": 19.151691436767578,
+      "backing_gain_db": -0.49096617102622986
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "James Elder & Mark M Thompson - The English Actor.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7407560830179136,
+      "x_realtime": 9.184462831948979,
+      "mlx_peak_bytes": 2892064792,
+      "est_peak": 0.6766582131385803,
+      "backing_sdr_db": 7.946691114774746,
+      "vocal_attenuation_db": 10.132599830627441,
+      "backing_gain_db": -0.4833475947380066
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Lyndsey Ollard - Catching Up.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7270283749967348,
+      "x_realtime": 9.357883331649465,
+      "mlx_peak_bytes": 2952931352,
+      "est_peak": 0.6629376411437988,
+      "backing_sdr_db": 11.819281544492124,
+      "vocal_attenuation_db": 20.304847717285156,
+      "backing_gain_db": -0.16181546449661255
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Mu - Too Bright.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.8148552080092486,
+      "x_realtime": 8.349270698826928,
+      "mlx_peak_bytes": 2952931352,
+      "est_peak": 0.3845646381378174,
+      "backing_sdr_db": 19.06081562890928,
+      "vocal_attenuation_db": 32.45591735839844,
+      "backing_gain_db": -0.10897208750247955
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Punkdisco - Oral Hygiene.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7429361249960493,
+      "x_realtime": 9.157512312453939,
+      "mlx_peak_bytes": 2945542168,
+      "est_peak": 0.4139705300331116,
+      "backing_sdr_db": 17.987572974802617,
+      "vocal_attenuation_db": 21.02338409423828,
+      "backing_gain_db": -0.11423930525779724
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Secretariat - Over The Top.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.716333541990025,
+      "x_realtime": 9.497596180010902,
+      "mlx_peak_bytes": 2952898584,
+      "est_peak": 0.4138755202293396,
+      "backing_sdr_db": 17.620234152969548,
+      "vocal_attenuation_db": 22.346797943115234,
+      "backing_gain_db": -0.16417719423770905
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Speak Softly - Broken Man.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7080890829965938,
+      "x_realtime": 9.60817907716686,
+      "mlx_peak_bytes": 2887903256,
+      "est_peak": 0.21530327200889587,
+      "backing_sdr_db": 17.116154628408502,
+      "vocal_attenuation_db": 14.696904182434082,
+      "backing_gain_db": -0.1876426637172699
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "The Easton Ellises - Falcon 69.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.757055499998387,
+      "x_realtime": 8.986721200800519,
+      "mlx_peak_bytes": 2892032024,
+      "est_peak": 0.3652102053165436,
+      "backing_sdr_db": 9.23123992663524,
+      "vocal_attenuation_db": 8.951648712158203,
+      "backing_gain_db": -0.45904719829559326
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Timboz - Pony.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7673662499873899,
+      "x_realtime": 8.865970730573492,
+      "mlx_peak_bytes": 2948769816,
+      "est_peak": 0.3295115828514099,
+      "backing_sdr_db": 15.082837133907761,
+      "vocal_attenuation_db": 11.603461265563965,
+      "backing_gain_db": -0.2436908483505249
+    },
+    {
+      "model": "demucs-vocals-ft",
+      "track": "Zeno - Signs.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 0.7373660420125816,
+      "x_realtime": 9.226688407630865,
+      "mlx_peak_bytes": 2892032024,
+      "est_peak": 0.36908379197120667,
+      "backing_sdr_db": 10.962037891397943,
+      "vocal_attenuation_db": 15.909271240234375,
+      "backing_gain_db": -0.4810764193534851
+    },
+    {
+      "model": "roformer",
+      "load_s": 1.5240769590018317
+    },
+    {
+      "model": "roformer",
+      "track": "Al James - Schoolboy Facination.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.5094339580100495,
+      "x_realtime": 1.2348721781348795,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.6171655654907227,
+      "backing_sdr_db": 12.468082816502712,
+      "vocal_attenuation_db": 26.218299865722656,
+      "backing_gain_db": -0.48364755511283875
+    },
+    {
+      "model": "roformer",
+      "track": "BKS - Too Much.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.771191000007093,
+      "x_realtime": 1.178863550350314,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.3697994649410248,
+      "backing_sdr_db": 17.712136907660863,
+      "vocal_attenuation_db": 32.906314849853516,
+      "backing_gain_db": -0.13344523310661316
+    },
+    {
+      "model": "roformer",
+      "track": "Carlos Gonzalez - A Place For Us.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.9727623329963535,
+      "x_realtime": 1.139078759995638,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.5353524684906006,
+      "backing_sdr_db": 9.352271709793541,
+      "vocal_attenuation_db": 19.763408660888672,
+      "backing_gain_db": -0.7113531827926636
+    },
+    {
+      "model": "roformer",
+      "track": "Forkupines - Semantics.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.8048816669906955,
+      "x_realtime": 1.1720216022155556,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.4178965389728546,
+      "backing_sdr_db": 13.899998432342606,
+      "vocal_attenuation_db": 23.272666931152344,
+      "backing_gain_db": -0.35843122005462646
+    },
+    {
+      "model": "roformer",
+      "track": "James Elder & Mark M Thompson - The English Actor.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.817377208004473,
+      "x_realtime": 1.169504137131915,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.7214174866676331,
+      "backing_sdr_db": 9.897523297394216,
+      "vocal_attenuation_db": 14.94885540008545,
+      "backing_gain_db": -0.41872647404670715
+    },
+    {
+      "model": "roformer",
+      "track": "Lyndsey Ollard - Catching Up.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.760090499999933,
+      "x_realtime": 1.1811353852892104,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.6728833913803101,
+      "backing_sdr_db": 18.46398680281135,
+      "vocal_attenuation_db": 35.84502029418945,
+      "backing_gain_db": -0.12068503350019455
+    },
+    {
+      "model": "roformer",
+      "track": "Mu - Too Bright.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.737849917000858,
+      "x_realtime": 1.1857136053454433,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.36216044425964355,
+      "backing_sdr_db": 22.077971101921563,
+      "vocal_attenuation_db": 47.14455032348633,
+      "backing_gain_db": -0.05648420751094818
+    },
+    {
+      "model": "roformer",
+      "track": "Punkdisco - Oral Hygiene.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 6.267311917006737,
+      "x_realtime": 1.0855446165933706,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.45177939534187317,
+      "backing_sdr_db": 20.488455421777253,
+      "vocal_attenuation_db": 29.419021606445312,
+      "backing_gain_db": -0.07039716839790344
+    },
+    {
+      "model": "roformer",
+      "track": "Secretariat - Over The Top.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.80877941599465,
+      "x_realtime": 1.1712351640147747,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.46674808859825134,
+      "backing_sdr_db": 19.090513482792893,
+      "vocal_attenuation_db": 26.980897903442383,
+      "backing_gain_db": -0.10747493803501129
+    },
+    {
+      "model": "roformer",
+      "track": "Speak Softly - Broken Man.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 6.478438040998299,
+      "x_realtime": 1.0501677516961727,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.242106631398201,
+      "backing_sdr_db": 22.322603086264778,
+      "vocal_attenuation_db": 27.28588104248047,
+      "backing_gain_db": -0.05021975189447403
+    },
+    {
+      "model": "roformer",
+      "track": "The Easton Ellises - Falcon 69.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 5.995244624995394,
+      "x_realtime": 1.1348071909615145,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.3899238407611847,
+      "backing_sdr_db": 13.196471654236095,
+      "vocal_attenuation_db": 17.275922775268555,
+      "backing_gain_db": -0.2564545273780823
+    },
+    {
+      "model": "roformer",
+      "track": "Timboz - Pony.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 6.209664416994201,
+      "x_realtime": 1.095622284096209,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.36021584272384644,
+      "backing_sdr_db": 15.373141213708406,
+      "vocal_attenuation_db": 15.577632904052734,
+      "backing_gain_db": -0.2867148518562317
+    },
+    {
+      "model": "roformer",
+      "track": "Zeno - Signs.stem",
+      "repeat": 1,
+      "audio_s": 6.8034467120181406,
+      "separate_s": 6.616177207994042,
+      "x_realtime": 1.0283047896295505,
+      "mlx_peak_bytes": 2017368992,
+      "est_peak": 0.4062972962856293,
+      "backing_sdr_db": 14.154881894874853,
+      "vocal_attenuation_db": 29.003070831298828,
+      "backing_gain_db": -0.30844059586524963
+    }
+  ],
+  "playback": {
+    "tones": {
+      "electron": "44.4.5",
+      "chromium": "152.0.7977.130",
+      "ranges": 1,
+      "sampleRate": 48000,
+      "full": {
+        "tones": [
+          [
+            0.19999983700726753, 7.44644986690339e-9, 0.0999999995104017, 2.699358680621399e-8, 1.3821407425031628e-9,
+            1.552720931782189e-8
+          ],
+          [
+            9.202096614648353e-9, 0.19999988586279155, 8.23609277008764e-9, 0.10000002967375471, 4.520876276139852e-8,
+            2.2817281770204225e-9
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.15811379998846456,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "half": {
+        "tones": [
+          [
+            0.1999998307456486, 6.60549617853189e-9, 0.04999999296499187, 1.9439623289110476e-8, 6.600294615487957e-10,
+            1.177048639914083e-8
+          ],
+          [
+            6.94658490788577e-9, 0.1999998833056308, 5.00441180052762e-9, 0.05000001622693754, 4.769208400228844e-8,
+            1.6185768698156604e-9
+          ]
+        ],
+        "peakError": 1.4901161193847656e-8,
+        "rms": 0.14577370008151605,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "off": {
+        "tones": [
+          [
+            0.19999982321377155, 6.772143098360159e-9, 1.4425658438397522e-8, 8.23609483930482e-9,
+            5.478996589534787e-10, 8.526304753899966e-9
+          ],
+          [
+            8.869653568276677e-9, 0.1999998833039051, 2.997919936934646e-9, 1.5129999545525928e-9, 4.281831137675539e-8,
+            5.137328928328461e-10
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.14142125247741505,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "afterSeek": {
+        "tones": [
+          [
+            4.836862184966288e-9, 3.8946640074964966e-8, 6.90862957983342e-9, 1.250070706068426e-8, 0.19999994304360458,
+            1.1055231312331985e-8
+          ],
+          [
+            1.3865282676504288e-8, 4.386252046974001e-9, 7.715926122145325e-9, 1.5547782634675906e-8,
+            1.3982979113323979e-8, 0.1999996549978063
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.14142121412588074,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "ramp10To90Ms": 18.666666666666668,
+      "sliderSeeks": 0,
+      "sliderStalls": 0
+    },
+    "nightowl": {
+      "electron": "44.4.5",
+      "chromium": "152.0.7977.130",
+      "ranges": 11,
+      "sampleRate": 48000,
+      "full": {
+        "tones": [
+          [
+            0.006112785203525635, 0.0021753903058802843, 0.000908421194223625, 0.01466012970289883,
+            0.0022734265781620203, 0.004280803883485438
+          ],
+          [
+            0.007216177997612114, 0.003373943627413182, 0.0011500214397338752, 0.012840729213836697,
+            0.002546936475336688, 0.004063625682049888
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.13741806399090037,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "half": {
+        "tones": [
+          [
+            0.0038892399321887, 0.001804457894500532, 0.0012489447745972666, 0.016435281756977983, 0.003869050344675032,
+            0.0024168373856919274
+          ],
+          [
+            0.0019630509442627214, 0.0018001281248422535, 0.0015048683749116212, 0.02903226233841073,
+            0.0007337407333729266, 0.0028215723010547905
+          ]
+        ],
+        "peakError": 1.4901161193847656e-8,
+        "rms": 0.1647808436071164,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "off": {
+        "tones": [
+          [
+            0.003920932120992233, 0.0019872107561429114, 0.0010372685552049164, 0.01076121366782553,
+            0.005757781819998677, 0.0045532546361874695
+          ],
+          [
+            0.0058337667213860704, 0.0029855630211400473, 0.001640196977944815, 0.01645911223780478,
+            4.1305437979822594e-5, 0.0018706002202111959
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.09643276381602545,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "afterSeek": {
+        "tones": [
+          [
+            0.0049964168982459655, 0.008483528062477852, 0.006108037717723885, 0.0017871397218742061,
+            0.0057720083693581295, 0.006222204760751985
+          ],
+          [
+            0.007767063241750415, 0.007226345043310828, 0.005333735395441818, 0.0028873363771984776,
+            0.0009884691182493767, 0.005780732438152832
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.17775575031040503,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "sliderSeeks": 0,
+      "sliderStalls": 0
+    },
+    "nightowl16Bit": {
+      "electron": "44.4.5",
+      "chromium": "152.0.7977.130",
+      "ranges": 8,
+      "sampleRate": 48000,
+      "full": {
+        "tones": [
+          [
+            0.006112701201154597, 0.0021755220738516315, 0.0009085320335265007, 0.014660311465298169,
+            0.00227346689745531, 0.004280877538558184
+          ],
+          [
+            0.007216056099883449, 0.0033740408201818994, 0.001150085998110091, 0.012840912092140095,
+            0.002547030862070417, 0.004063646431172651
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.13742019598691702,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "half": {
+        "tones": [
+          [
+            0.003889410281816508, 0.0018044991540988823, 0.0012489473996047488, 0.016435582542869073,
+            0.003868960328533126, 0.002416998637707222
+          ],
+          [
+            0.001963205083272145, 0.0018001693189653742, 0.0015047552147187196, 0.029032680279974066,
+            0.0007336529176684911, 0.0028215540101067553
+          ]
+        ],
+        "peakError": 1.4901161193847656e-8,
+        "rms": 0.1647830561035871,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "off": {
+        "tones": [
+          [
+            0.0039212025517721604, 0.0019872783397851365, 0.0010368684007562262, 0.010761366420796097,
+            0.005757964407816329, 0.004552959315977543
+          ],
+          [
+            0.005833597198625353, 0.0029856625394113945, 0.001639875142227678, 0.016459195334333595,
+            4.110609690541011e-5, 0.0018705898268818351
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.09643448985407217,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "afterSeek": {
+        "tones": [
+          [
+            0.007163288660847437, 0.009267554323430158, 0.005684763462815966, 0.00010117938222044292,
+            0.003662097402966431, 0.004641098863582665
+          ],
+          [
+            0.007809821857714794, 0.004436792265641846, 0.005776444473508066, 0.002349400751023868,
+            0.0020014943592309873, 0.004084051744344503
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.1788888523293309,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "sliderSeeks": 0,
+      "sliderStalls": 0
+    },
+    "nightowlOpus": {
+      "electron": "44.4.5",
+      "chromium": "152.0.7977.130",
+      "ranges": 3,
+      "sampleRate": 48000,
+      "full": {
+        "tones": [
+          [
+            0.012478358149288913, 0.005449250103600475, 0.002835864566971855, 0.014607130389969664,
+            0.0027310183827970913, 0.0054827554951103336
+          ],
+          [
+            0.01334413358745623, 0.004734726509214559, 0.0027415477859672977, 0.013909382696308523,
+            0.0015859888796593198, 0.003158069257683428
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.13716454828056676,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "half": {
+        "tones": [
+          [
+            0.0024237591255551133, 0.0019608497828630823, 0.0018693454227894887, 0.01608114803078836,
+            0.0033705339093831536, 0.001025775571741489
+          ],
+          [
+            0.0009478047187451861, 0.0005381142811041017, 0.001083995755720042, 0.028606554185393037,
+            0.0009100388049341427, 0.002342912971251412
+          ]
+        ],
+        "peakError": 1.4901161193847656e-8,
+        "rms": 0.16276427483029482,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "off": {
+        "tones": [
+          [
+            0.004343312379124054, 0.0012691900588887323, 0.0023142522681619394, 0.012620604593201627,
+            0.005629135764932298, 0.003996610877461149
+          ],
+          [
+            0.00566545752503419, 0.0014671101171580036, 0.00047152519796550346, 0.01808951150481339,
+            0.0008266581028037596, 0.000365276098927828
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.10364132666745307,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "afterSeek": {
+        "tones": [
+          [
+            0.0012692746705451276, 0.0036278521849012787, 0.005074938285634665, 0.001504382750330287,
+            0.004064674376428022, 0.0058448786124878005
+          ],
+          [
+            0.002229675068987436, 0.001492183771838794, 0.002759159958773406, 0.003508485992095264,
+            0.0011959555170561952, 0.004248358046598193
+          ]
+        ],
+        "peakError": 0,
+        "rms": 0.17748182105380467,
+        "ramp": [],
+        "blockSize": 128
+      },
+      "sliderSeeks": 0,
+      "sliderStalls": 0
+    }
+  },
+  "storage": {
+    "sampleFrames": 7560512,
+    "originalPackPeakError": 0.0,
+    "originalAndBacking24BitBytes": 46823126,
+    "originalAndBacking16BitBytes": 31698903,
+    "originalAndBacking16BitSNRdB": 82.198456,
+    "originalAndBackingOpusBytes": 5276277,
+    "originalAndResidual24BitBytes": 39931535
+  }
+}
