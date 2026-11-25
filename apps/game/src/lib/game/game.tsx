@@ -2,6 +2,7 @@ import createRAF from "@solid-primitives/raf";
 import { type Accessor, batch, createEffect, createMemo, createSignal, type JSX, onCleanup, untrack } from "solid-js";
 
 import type { SongPlayerRef } from "~/components/song-player";
+import { micPlaybackAvailable, requestRecording } from "~/lib/audio/recording-session";
 import { native } from "~/lib/native/client";
 import { logPerfReport, pauseFrames, recordClock, recordFrame, timeCall } from "~/lib/perf";
 import { beatToMs, beatToMsWithoutGap, msToBeat, msToBeatWithoutGap } from "~/lib/ultrastar/bpm";
@@ -22,9 +23,6 @@ export interface CreateGameOptions {
 }
 
 export { useGame } from "./game-context";
-
-/** The previous game's recorder teardown; a new game's recording waits for it. */
-let teardown: Promise<void> = Promise.resolve();
 
 export function createGame(options: Accessor<CreateGameOptions>) {
   const [ms, setMs] = createSignal(0);
@@ -63,48 +61,26 @@ export function createGame(options: Accessor<CreateGameOptions>) {
   // Development: the per-beat pitch requests scoring used before, scored on the side to compare.
   const comparingScoring = compareScoringEnabled();
 
-  // Recording is started and stopped across the Electron boundary, so the screen can leave while
-  // `start` is still in flight. Only `stop` tears down: it waits for the start and stops the
-  // recorder if that came up. The recorder is global, so a start first waits for the previous
-  // screen's teardown, or that teardown could stop the new round's recorder.
-  let recording: Promise<boolean> | undefined;
+  let recording: ReturnType<typeof requestRecording> | undefined;
   let disposed = false;
+  const recordingSlot = (player: number) => recording?.slot(player) ?? -1;
+  const pitchTimeline = (player: number) => livePitch.timeline(simulatedSinger ? player : recordingSlot(player));
+  const playerPitches = (values: number[]) => players().map((_, index) => values[recordingSlot(index)] ?? -1);
 
   const start = async () => {
-    const opts = options();
-
-    if (!opts.song) {
-      throw new Error("No song provided");
-    }
-
-    recording = (async () => {
-      await teardown;
-      if (disposed) return false;
-      await native.recording.start({
-        microphones: roundStore.settings()?.songs[0]?.players.map((p) => p?.microphone) ?? [],
-        playbackEnabled: settingsStore.general().micPlaybackEnabled,
-        playbackVolume: settingsStore.volume().micPlayback,
-      });
-      return true;
-    })();
-
-    if (!(await recording) || disposed) return false;
-
+    if (!options().song) throw new Error("No song provided");
+    recording = requestRecording(players().map((player) => player?.microphone));
+    await recording.ready();
+    if (disposed) return false;
     setStarted(true);
     setPlaying(true);
-
     return true;
   };
 
-  const stop = async () => {
+  const stop = () => {
     disposed = true;
-    const current = recording;
-    teardown = (async () => {
-      if (await current?.catch(() => false)) {
-        await native.recording.stop().catch((error) => console.error("Failed to stop recording:", error));
-      }
-    })();
-    await teardown;
+    recording?.release();
+    recording = undefined;
     logPerfReport();
   };
 
@@ -125,7 +101,7 @@ export function createGame(options: Accessor<CreateGameOptions>) {
       : undefined;
     batch(() => {
       setFinishing(true);
-      if (last && !last[0]) setPitches(last[1]);
+      if (last && !last[0]) setPitches(playerPitches(last[1]));
     });
   };
 
@@ -269,7 +245,7 @@ export function createGame(options: Accessor<CreateGameOptions>) {
           const result = simulatedSinger
             ? // The analysis covers the beat that just ended, so the singer is asked about its middle.
               untrack(delays).map((delay, mic) => simulatedSinger.hzAt(mic, untrack(ms) - delay - windowMs / 2))
-            : await timeCall("getPitches", () => native.pitch.get({ windowMs }));
+            : playerPitches(await timeCall("getPitches", () => native.pitch.get({ windowMs })));
           if (request < appliedPitchRequest) return;
           appliedPitchRequest = request;
           setPitches(result);
@@ -346,7 +322,7 @@ export function createGame(options: Accessor<CreateGameOptions>) {
     pitches,
     playerCount,
     finishing,
-    pitchTimeline: livePitch.timeline,
+    pitchTimeline,
   };
 
   const Provider = (props: { children: JSX.Element }) => (
@@ -356,6 +332,7 @@ export function createGame(options: Accessor<CreateGameOptions>) {
   return {
     GameProvider: Provider,
     finish,
+    micPlaybackAvailable,
     ...values,
   };
 }

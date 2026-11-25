@@ -174,6 +174,11 @@ const en = {
   game: {
     pause: {
       resume: "Resume",
+      micPlayback: "Mic Playback",
+      micVolume: "Mic Volume",
+      micPlaybackUnavailable: "Mic playback unavailable. Check your microphone and audio output.",
+      on: "On",
+      off: "Off",
       restart: "Restart",
       next: "Next Song",
       exit: "Exit",

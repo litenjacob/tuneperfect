@@ -34,8 +34,16 @@ export function nativeProcedures({ songFolders }: NativeDependencies) {
     recording: {
       start: os.recording.start.handler(async ({ input }) => {
         await ensureMicrophoneAccess();
-        await native.startRecording(input.microphones, input.playbackEnabled, input.playbackVolume);
+        return native.startRecording(
+          input.microphones,
+          input.playbackEnabled,
+          input.playbackVolume,
+          input.microphoneLevels,
+        );
       }),
+      setPlayback: os.recording.setPlayback.handler(({ input }) =>
+        native.setMicrophonePlayback(input.enabled, input.volume, input.microphoneLevels),
+      ),
       stop: os.recording.stop.handler(() => native.stopRecording()),
     },
     pitch: {

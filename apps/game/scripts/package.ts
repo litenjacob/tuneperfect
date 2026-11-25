@@ -140,7 +140,9 @@ const config: Configuration = {
     // There's no Developer ID yet: skip electron-builder's signing, which would pick up any
     // certificate in the local keychain, and sign ad-hoc in `afterPack` instead.
     identity: null,
-    extendInfo: { NSMicrophoneUsageDescription: "Tune Perfect uses the microphone to score your singing." },
+    extendInfo: {
+      NSMicrophoneUsageDescription: "Tune Perfect uses the microphone to play back your voice and score your singing.",
+    },
     minimumSystemVersion: "12.0",
     target: dirOnly ? ["dir"] : ["dmg"],
   },

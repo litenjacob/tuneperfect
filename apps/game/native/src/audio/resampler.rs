@@ -1,13 +1,11 @@
 use crate::error::AppError;
-use ringbuf::traits::Consumer;
+use ringbuf::traits::{Consumer, Observer};
 use ringbuf::HeapCons;
 use rubato::audioadapter_buffers::direct::InterleavedSlice;
-use rubato::{Async, FixedAsync, Indexing, Resampler, SincInterpolationParameters, WindowFunction};
+use rubato::{Async, FixedAsync, Resampler, SincInterpolationParameters, WindowFunction};
 
-/// Input frames per `process` call. The resampler is created in `FixedAsync::Input`
-/// mode, so it consumes exactly this many frames each call. Partial reads are
-/// buffered in `pending_input` until a chunk is ready.
-const RESAMPLER_CHUNK: usize = 1024;
+/// Small blocks keep conversion latency below a typical device callback.
+const RESAMPLER_CHUNK: usize = 128;
 
 /// Single-channel (mono) resampling: every buffer is one channel of interleaved
 /// data, which for one channel is just a flat slice.
@@ -15,28 +13,28 @@ const CHANNELS: usize = 1;
 
 pub struct AudioResampler {
     resampler: Async<f32>,
-    pending_input: Vec<f32>,
+    input_per_output: f64,
     output_buffer: Vec<f32>,
-    /// Resampled samples produced but not yet copied into the mix.
-    output_leftover: Vec<f32>,
+    remaining: std::ops::Range<usize>,
 }
 
 impl AudioResampler {
     pub fn new(input_rate: u32, output_rate: u32) -> Result<Option<Self>, AppError> {
-        if input_rate == output_rate {
+        if input_rate == 0 || input_rate == output_rate {
             return Ok(None);
         }
 
         let params = SincInterpolationParameters {
-            sinc_len: 256,
+            sinc_len: 128,
             f_cutoff: Some(0.95),
             window: WindowFunction::BlackmanHarris2,
             oversampling_factor: 256,
             interpolation: rubato::SincInterpolationType::Linear,
         };
 
+        let input_per_output = input_rate as f64 / output_rate as f64;
         let resampler = Async::<f32>::new_sinc(
-            output_rate as f64 / input_rate as f64,
+            input_per_output.recip(),
             2.0,
             &params,
             RESAMPLER_CHUNK,
@@ -49,96 +47,106 @@ impl AudioResampler {
 
         Ok(Some(Self {
             resampler,
-            pending_input: Vec::with_capacity(RESAMPLER_CHUNK * 2),
+            input_per_output,
             output_buffer: vec![0.0f32; output_capacity],
-            output_leftover: Vec::with_capacity(output_capacity * 2),
+            remaining: 0..0,
         }))
     }
 
-    /// Drain `consumer`, resample, and write up to `frame_size` samples into
-    /// `out` (zero-filling the remainder). Partial input/output is buffered
-    /// across calls so no audio is dropped and the steady state never allocates.
+    /// Produce only as many blocks as the output needs, keeping at most one
+    /// converted block between callbacks.
     pub fn resample_into(
         &mut self,
         consumer: &mut HeapCons<f32>,
-        frame_size: usize,
-        out: &mut [f32],
+        mut out: &mut [f32],
+        input_frames: usize,
     ) {
-        let mut tmp = [0.0f32; RESAMPLER_CHUNK];
-        loop {
-            let n = consumer.pop_slice(&mut tmp);
-            if n == 0 {
-                break;
+        let needed = (out.len() as f64 * self.input_per_output).ceil() as usize;
+        // A device may send one large input block for several smaller output
+        // callbacks. Keep that block and the partial sinc chunk it may follow.
+        let max_backlog = (needed * 2).max(input_frames) + RESAMPLER_CHUNK;
+        consumer.skip(consumer.occupied_len().saturating_sub(max_backlog));
+
+        let mut input_block = [0.0; RESAMPLER_CHUNK];
+        while !out.is_empty() {
+            if self.remaining.is_empty() {
+                if consumer.occupied_len() < RESAMPLER_CHUNK {
+                    break;
+                }
+                consumer.pop_slice(&mut input_block);
+                let input = InterleavedSlice::new(&input_block, CHANNELS, RESAMPLER_CHUNK)
+                    .expect("one complete mono input block");
+                let output_frames = self.output_buffer.len();
+                let mut output =
+                    InterleavedSlice::new_mut(&mut self.output_buffer, CHANNELS, output_frames)
+                        .expect("one complete mono output block");
+                let Ok((_, written)) =
+                    self.resampler
+                        .process_into_buffer(&input, &mut output, None)
+                else {
+                    break;
+                };
+                self.remaining = 0..written;
             }
-            self.pending_input.extend_from_slice(&tmp[..n]);
+
+            let count = self.remaining.len().min(out.len());
+            let end = self.remaining.start + count;
+            out[..count].copy_from_slice(&self.output_buffer[self.remaining.start..end]);
+            self.remaining.start = end;
+            out = &mut out[count..];
         }
-
-        while self.pending_input.len() >= RESAMPLER_CHUNK {
-            let input = match InterleavedSlice::new(
-                &self.pending_input[..RESAMPLER_CHUNK],
-                CHANNELS,
-                RESAMPLER_CHUNK,
-            ) {
-                Ok(input) => input,
-                Err(_) => {
-                    self.pending_input.drain(..RESAMPLER_CHUNK);
-                    continue;
-                }
-            };
-
-            let output_frames = self.output_buffer.len();
-            let mut output = match InterleavedSlice::new_mut(
-                &mut self.output_buffer[..],
-                CHANNELS,
-                output_frames,
-            ) {
-                Ok(output) => output,
-                Err(_) => {
-                    self.pending_input.drain(..RESAMPLER_CHUNK);
-                    continue;
-                }
-            };
-
-            let indexing = Indexing {
-                input_offset: 0,
-                output_offset: 0,
-                active_channels_mask: None,
-                partial_len: None,
-            };
-
-            match self
-                .resampler
-                .process_into_buffer(&input, &mut output, Some(&indexing))
-            {
-                Ok((input_used, output_written)) => {
-                    self.output_leftover
-                        .extend_from_slice(&self.output_buffer[..output_written]);
-                    // Always advance by a full chunk to guarantee forward progress.
-                    let drained = input_used
-                        .max(RESAMPLER_CHUNK)
-                        .min(self.pending_input.len());
-                    self.pending_input.drain(..drained);
-                }
-                Err(_) => {
-                    self.pending_input.drain(..RESAMPLER_CHUNK);
-                }
-            }
-        }
-
-        let out = &mut out[..frame_size];
-        let count = self.output_leftover.len().min(frame_size);
-        out[..count].copy_from_slice(&self.output_leftover[..count]);
-        out[count..].fill(0.0);
-        self.output_leftover.drain(..count);
+        out.fill(0.0);
     }
 }
 
-pub fn create_resamplers(
-    input_sample_rates: &[u32],
-    output_sample_rate: u32,
-) -> Result<Vec<Option<AudioResampler>>, AppError> {
-    input_sample_rates
-        .iter()
-        .map(|&input_rate| AudioResampler::new(input_rate, output_sample_rate))
-        .collect()
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ringbuf::{
+        traits::{Producer, Split},
+        HeapRb,
+    };
+
+    #[test]
+    fn mismatched_rates_keep_audio_continuous_with_small_callbacks() {
+        for (input_rate, output_rate) in [(44_100, 48_000), (48_000, 44_100)] {
+            let mut resampler = AudioResampler::new(input_rate, output_rate)
+                .unwrap()
+                .unwrap();
+            let (mut producer, mut consumer) = HeapRb::<f32>::new(4096).split();
+            let input = [0.25; 512];
+            let mut output = [0.0; 256];
+            // Allow for the sinc filter delay and for one partly filled input block.
+            let mut written = producer.push_slice(&input[..256]);
+            for callback in 1..100 {
+                let needed =
+                    callback * output.len() * input_rate as usize / output_rate as usize + 256;
+                written += producer.push_slice(&input[..needed - written]);
+                resampler.resample_into(&mut consumer, &mut output, 256);
+                if callback > 1 {
+                    assert!(output.iter().all(|sample| (*sample - 0.25).abs() < 0.01));
+                }
+            }
+        }
+    }
+    #[test]
+    fn small_output_callbacks_do_not_discard_large_input_blocks() {
+        let mut resampler = AudioResampler::new(24_000, 48_000).unwrap().unwrap();
+        let (mut producer, mut consumer) = HeapRb::<f32>::new(4096).split();
+        let mut output = [0.0; 128];
+        // The resampler needs one input chunk of headroom on startup.
+        producer.push_slice(&[0.25; RESAMPLER_CHUNK]);
+        for callback in 0..48 {
+            if callback % 8 == 0 {
+                producer.push_slice(&[0.25; 512]);
+            }
+            resampler.resample_into(&mut consumer, &mut output, 512);
+            if callback > 3 {
+                assert!(
+                    output.iter().all(|sample| (*sample - 0.25).abs() < 0.01),
+                    "callback {callback}"
+                );
+            }
+        }
+    }
 }

@@ -11,7 +11,7 @@ const defaultSettings: SettingsStore = {
     showNoteSegments: false,
     difficulty: "easy",
     audioMode: "normal",
-    micPlaybackEnabled: false,
+    micPlaybackEnabled: true,
     songSelectStyle: "coverflow",
     singingView: "classic",
     outputLatency: 0,
@@ -25,6 +25,7 @@ const defaultSettings: SettingsStore = {
     micPlayback: 1,
     effects: 0.5,
   },
+  mixer: { microphones: [] },
   microphones: [],
   songs: {
     paths: [],
@@ -41,6 +42,7 @@ export const settings = settingsStoreInstance.settings;
 export const setSettings = settingsStoreInstance.setSettings;
 export const updateSettings = settingsStoreInstance.updateSettings;
 export const initializeSettings = settingsStoreInstance.initialize;
+export const settingsInitialized = settingsStoreInstance.initialized;
 
 export type Microphone = SettingsStore["microphones"][number];
 export type VolumeSettings = SettingsStore["volume"];

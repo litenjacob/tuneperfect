@@ -1,5 +1,7 @@
 import * as v from "valibot";
 
+import { micPlaybackVolumeSchema } from "~/lib/audio/mic-playback";
+
 const microphoneSchema = v.object({
   // Stable device ID (cpal `DeviceId`). Optional so configs saved before ID
   // support remain valid; the backend falls back to matching by `name`.
@@ -40,7 +42,7 @@ export const settingsStoreSchema = v.object({
     showNoteSegments: v.fallback(v.boolean(), false),
     difficulty: v.fallback(v.picklist(["easy", "medium", "hard"]), "easy"),
     audioMode: v.fallback(v.picklist(["normal", "preferInstrumental"]), "normal"),
-    micPlaybackEnabled: v.fallback(v.boolean(), false),
+    micPlaybackEnabled: v.fallback(v.boolean(), true),
     songSelectStyle: v.fallback(v.picklist(["coverflow", "grid"]), "coverflow"),
     /** Classic pages of notes, or notes scrolling past a now-line. */
     singingView: v.fallback(v.picklist(["classic", "scrolling"]), "classic"),
@@ -52,8 +54,11 @@ export const settingsStoreSchema = v.object({
     game: v.fallback(v.number(), 1),
     preview: v.fallback(v.number(), 0.5),
     menu: v.fallback(v.number(), 0.5),
-    micPlayback: v.fallback(v.number(), 1),
+    micPlayback: v.fallback(micPlaybackVolumeSchema, 1),
     effects: v.fallback(v.number(), 0.5),
+  }),
+  mixer: section({
+    microphones: v.fallback(v.array(v.fallback(micPlaybackVolumeSchema, 1)), []),
   }),
   microphones: validItems(microphoneSchema),
   songs: section({

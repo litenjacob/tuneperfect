@@ -1,6 +1,5 @@
-//! The addon's JavaScript surface. Every export is async so no native work runs on the
-//! Electron main thread: blocking calls (device enumeration, stopping the recorder) are
-//! moved onto tokio's blocking pool.
+//! The addon's JavaScript surface. Blocking calls (device enumeration, stopping the recorder)
+//! are moved onto tokio's blocking pool.
 //!
 //! Structured values cross as JSON-compatible objects (`serde_json::Value`) so the serde
 //! shapes the frontend already knows are preserved exactly. Failures reject with an
@@ -100,10 +99,33 @@ pub async fn start_recording(
     options: Value,
     playback_enabled: bool,
     playback_volume: f64,
-) -> Result<()> {
+    microphone_levels: Option<Vec<f64>>,
+) -> Result<bool> {
     let options: Vec<MicrophoneOptions> = from_json(options)?;
-    blocking(move || pitch::start_recording(options, playback_enabled, playback_volume as f32))
-        .await
+    blocking(move || {
+        let levels = microphone_levels
+            .unwrap_or_default()
+            .into_iter()
+            .map(|level| level as f32)
+            .collect::<Vec<_>>();
+        pitch::start_recording(options, playback_enabled, playback_volume as f32, &levels)
+    })
+    .await
+}
+
+#[napi]
+pub fn set_microphone_playback(
+    enabled: bool,
+    volume: f64,
+    microphone_levels: Option<Vec<f64>>,
+) -> Result<()> {
+    let levels = microphone_levels.map(|values| {
+        values
+            .into_iter()
+            .map(|level| level as f32)
+            .collect::<Vec<_>>()
+    });
+    pitch::set_playback(enabled, volume as f32, levels.as_deref()).map_err(Error::from)
 }
 
 #[napi]

@@ -1,6 +1,7 @@
 import { eventIterator, oc, type } from "@orpc/contract";
 import * as v from "valibot";
 
+import { micPlaybackVolumeSchema } from "../audio/mic-playback";
 import type {
   Microphone,
   ParseEvent,
@@ -68,13 +69,25 @@ export const contract = {
     list: base.output(type<Microphone[]>()),
   },
   recording: {
-    start: base.input(
-      v.object({
-        microphones: v.array(microphoneOptionsSchema),
-        playbackEnabled: v.boolean(),
-        playbackVolume: v.number(),
-      }),
-    ),
+    start: base
+      .input(
+        v.object({
+          microphones: v.array(microphoneOptionsSchema),
+          playbackEnabled: v.boolean(),
+          playbackVolume: micPlaybackVolumeSchema,
+          microphoneLevels: v.optional(v.array(micPlaybackVolumeSchema)),
+        }),
+      )
+      .output(type<boolean>()),
+    setPlayback: base
+      .input(
+        v.object({
+          enabled: v.boolean(),
+          volume: micPlaybackVolumeSchema,
+          microphoneLevels: v.optional(v.array(micPlaybackVolumeSchema)),
+        }),
+      )
+      .output(type<void>()),
     stop: base,
   },
   pitch: {

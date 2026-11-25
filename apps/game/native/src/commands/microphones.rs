@@ -16,6 +16,10 @@ pub fn get_microphones() -> Result<Vec<Microphone>, AppError> {
     let mut microphones = Vec::new();
 
     let host = cpal::default_host();
+    let default_id = host
+        .default_input_device()
+        .and_then(|device| device.id().ok())
+        .map(|id| id.to_string());
     let devices = host.devices()?;
     for device in devices {
         let Ok(config) = device.default_input_config() else {
@@ -32,5 +36,6 @@ pub fn get_microphones() -> Result<Vec<Microphone>, AppError> {
         });
     }
 
+    microphones.sort_by_key(|mic| default_id.is_none() || mic.id != default_id);
     Ok(microphones)
 }

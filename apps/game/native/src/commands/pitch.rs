@@ -11,7 +11,8 @@ pub fn start_recording(
     options: Vec<MicrophoneOptions>,
     playback_enabled: bool,
     playback_volume: f32,
-) -> Result<(), AppError> {
+    microphone_levels: &[f32],
+) -> Result<bool, AppError> {
     let state = state();
     let mut recorder = state
         .recorder
@@ -23,12 +24,32 @@ pub fn start_recording(
         recorder.take();
     }
 
-    *recorder = Some(Recorder::new(
+    let (started, playback_available) = Recorder::new(
         state.processors.clone(),
         options,
         playback_enabled,
         playback_volume,
-    )?);
+        microphone_levels,
+    )
+    .inspect_err(|_| {
+        let _ = clear_processors();
+    })?;
+    *recorder = Some(started);
+    Ok(playback_available)
+}
+
+pub fn set_playback(
+    enabled: bool,
+    volume: f32,
+    microphone_levels: Option<&[f32]>,
+) -> Result<(), AppError> {
+    let recorder = state()
+        .recorder
+        .read()
+        .map_err(|_| AppError::RecorderError("Failed to acquire recorder lock".to_string()))?;
+    if let Some(recorder) = recorder.as_ref() {
+        recorder.set_playback(enabled, volume, microphone_levels);
+    }
     Ok(())
 }
 

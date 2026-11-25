@@ -61,6 +61,7 @@ export default function GameScreen() {
     resume,
     playing,
     started,
+    micPlaybackAvailable,
     scores,
     stats,
     skip,
@@ -279,6 +280,7 @@ export default function GameScreen() {
                   onNext={handleNext}
                   showNext={roundSong()?.mode === "medley" && (roundStore.settings()?.songs.length ?? 0) > 1}
                   onRestart={handleRestart}
+                  micPlaybackAvailable={players().some(Boolean) ? micPlaybackAvailable() : undefined}
                   gradient={gradient()}
                 />
               </Show>

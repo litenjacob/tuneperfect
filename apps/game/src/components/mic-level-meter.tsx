@@ -2,8 +2,8 @@ import { debounce } from "@solid-primitives/scheduled";
 import { createEffect, createSignal, on, onCleanup } from "solid-js";
 
 import { subscribePitchStream } from "~/lib/audio/pitch-stream";
+import { requestRecording } from "~/lib/audio/recording-session";
 import { t } from "~/lib/i18n";
-import { native } from "~/lib/native/client";
 
 interface MicLevelMeterProps {
   /** Stable device ID. Preferred over `name` for selecting the device. */
@@ -18,88 +18,32 @@ export default function MicLevelMeter(props: MicLevelMeterProps) {
   const [level, setLevel] = createSignal(0);
   const [active, setActive] = createSignal(false);
 
-  let restarting = false;
-  // A device/channel/gain change while a start is in flight: run start once more afterwards so it isn't dropped.
-  let pendingRestart = false;
-  // Set on unmount: an in-flight start must not leave the microphone recording.
-  let disposed = false;
-
-  const startPreview = async () => {
-    if (disposed) return;
-    if (restarting) {
-      pendingRestart = true;
-      return;
-    }
-    restarting = true;
-
-    try {
-      const name = props.name();
-      if (!name) return;
-
-      // Prefer the stable device id; the backend falls back to name matching
-      // when no id is set (and name is always sent for that fallback).
-      const deviceId = props.deviceId();
-
-      await native.recording.stop().catch(() => {});
-      if (disposed) return;
-
-      const started = await native.recording
-        .start({
-          microphones: [{ deviceId, name, channel: props.channel(), gain: props.gain(), threshold: 0, delay: 0 }],
-          playbackEnabled: false,
-          playbackVolume: 0,
-        })
-        .then(
-          () => true,
-          () => false,
-        );
-
-      if (disposed) {
-        if (started) await native.recording.stop().catch(() => {});
-        return;
-      }
-
-      if (started) {
-        setActive(true);
-      }
-    } finally {
-      restarting = false;
-      if (pendingRestart && !disposed) {
-        pendingRestart = false;
-        void startPreview();
-      }
-    }
+  let preview: ReturnType<typeof requestRecording> | undefined;
+  const startPreview = () => {
+    preview?.release();
+    const name = props.name();
+    if (!name) return;
+    const request = requestRecording([
+      {
+        deviceId: props.deviceId(),
+        name,
+        channel: props.channel(),
+        gain: props.gain(),
+        threshold: 0,
+        delay: 0,
+      },
+    ]);
+    preview = request;
+    void request
+      .ready()
+      .then(() => {
+        if (preview === request) setActive(true);
+      })
+      .catch(() => {});
   };
-
   // oxlint-disable-next-line solid/reactivity
   const debouncedRestart = debounce(startPreview, 300);
-
-  const stopPreview = async () => {
-    debouncedRestart.clear();
-    setActive(false);
-    setLevel(0);
-    await native.recording.stop().catch(() => {});
-  };
-
-  // Restart the recording stream when device or channel changes
-  createEffect(
-    on([() => props.deviceId(), () => props.name(), () => props.channel()], () => {
-      debouncedRestart();
-    }),
-  );
-
-  // Gain is baked into the audio processor, so we need to restart for it too
-  createEffect(
-    on(
-      () => props.gain(),
-      () => {
-        if (active()) {
-          debouncedRestart();
-        }
-      },
-      { defer: true },
-    ),
-  );
+  createEffect(on([props.deviceId, props.name, props.channel, props.gain], () => debouncedRestart()));
 
   // dB scale so quiet sounds are still visible and loud ones don't just max out
   const ampToMeter = (amp: number): number => {
@@ -120,7 +64,7 @@ export default function MicLevelMeter(props: MicLevelMeterProps) {
 
     const unsubscribe = subscribePitchStream((batch, receivedAt) => {
       let peak = -1;
-      for (const frame of batch.frames) if (frame.mic === 0) peak = Math.max(peak, frame.level);
+      for (const frame of batch.frames) if (frame.mic === preview?.slot(0)) peak = Math.max(peak, frame.level);
       if (peak < 0) return;
 
       const meter = ampToMeter(peak);
@@ -134,9 +78,9 @@ export default function MicLevelMeter(props: MicLevelMeterProps) {
   });
 
   onCleanup(() => {
-    disposed = true;
-    pendingRestart = false;
-    stopPreview();
+    debouncedRestart.clear();
+    preview?.release();
+    preview = undefined;
   });
 
   const percentage = () => level() * 100;

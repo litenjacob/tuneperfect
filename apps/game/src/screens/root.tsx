@@ -3,6 +3,7 @@ import { debounce } from "@solid-primitives/scheduled";
 import { Outlet, useLocation } from "@tanstack/solid-router";
 import { createSignal, Suspense } from "solid-js";
 
+import "~/lib/audio/recording-session";
 import PopupContainer from "~/components/popup-container";
 import { ToastRegion } from "~/components/ui/toast";
 import { useNavigation } from "~/hooks/navigation";

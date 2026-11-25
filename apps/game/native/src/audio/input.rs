@@ -1,17 +1,14 @@
 use super::{
+    output::MonitorInput,
     processor::{AudioInput, Processor},
     types::MicrophoneOptions,
 };
 use crate::{error::AppError, state::ProcessorMap};
 use cpal::traits::{DeviceTrait, StreamTrait};
 use cpal::{Device, Stream, StreamConfig};
-use ringbuf::{traits::Producer, HeapProd};
 use std::{
     collections::HashMap,
-    sync::{
-        atomic::{AtomicBool, Ordering},
-        Arc, Mutex,
-    },
+    sync::{Arc, Mutex},
 };
 
 /// Manages input stream setup and audio routing
@@ -23,11 +20,9 @@ impl InputStreamManager {
         devices: Vec<(Device, StreamConfig, Vec<usize>)>,
         options: &[MicrophoneOptions],
         processor_map: ProcessorMap,
-        mut output_producers: HashMap<usize, HeapProd<f32>>,
-        playback_enabled: Arc<AtomicBool>,
+        mut output_producers: HashMap<usize, MonitorInput>,
     ) -> Result<Vec<Stream>, AppError> {
         let mut streams = Vec::new();
-        let playback_enabled_clone = playback_enabled.clone();
 
         for (device, config, mic_indices) in devices {
             let channels = config.channels as usize;
@@ -62,7 +57,7 @@ impl InputStreamManager {
 
             // Move (not clone) each producer to the single input callback that
             // writes to it; the ring buffer is lock-free SPSC.
-            let device_output_producers: HashMap<usize, HeapProd<f32>> = mic_indices
+            let device_output_producers: HashMap<usize, MonitorInput> = mic_indices
                 .iter()
                 .filter_map(|&index| {
                     output_producers
@@ -77,7 +72,6 @@ impl InputStreamManager {
                 channels,
                 inputs,
                 device_output_producers,
-                playback_enabled_clone.clone(),
             );
 
             let stream = device.build_input_stream(
@@ -102,8 +96,7 @@ impl InputStreamManager {
         options: &[MicrophoneOptions],
         channels: usize,
         mut inputs: HashMap<usize, AudioInput>,
-        mut device_output_producers: HashMap<usize, HeapProd<f32>>,
-        playback_enabled: Arc<AtomicBool>,
+        mut device_output_producers: HashMap<usize, MonitorInput>,
     ) -> impl FnMut(&[f32], &cpal::InputCallbackInfo) + Send + 'static {
         let options_map: HashMap<usize, MicrophoneOptions> = mic_indices
             .iter()
@@ -128,16 +121,10 @@ impl InputStreamManager {
                     input.push_audio_data(&channel_buffer);
                 }
 
-                if playback_enabled.load(Ordering::Relaxed) {
-                    if let Some(producer) = device_output_producers.get_mut(&index) {
-                        gained_buffer.clear();
-                        gained_buffer.extend(
-                            channel_buffer
-                                .iter()
-                                .map(|&s| (s * option.gain).clamp(-1.0, 1.0)),
-                        );
-                        let _ = producer.push_slice(&gained_buffer);
-                    }
+                if let Some(producer) = device_output_producers.get_mut(&index) {
+                    gained_buffer.clear();
+                    gained_buffer.extend(channel_buffer.iter().map(|&s| s * option.gain));
+                    producer.push(&gained_buffer);
                 }
             }
         }

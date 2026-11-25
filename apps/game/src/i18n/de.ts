@@ -176,6 +176,11 @@ const de = {
   game: {
     pause: {
       resume: "Fortsetzen",
+      micPlayback: "Mikrofon-Wiedergabe",
+      micVolume: "Mikrofonpegel",
+      micPlaybackUnavailable: "Mikrofon-Wiedergabe nicht verfügbar. Prüfe Mikrofon und Audioausgabe.",
+      on: "An",
+      off: "Aus",
       restart: "Neustart",
       next: "Nächstes Lied",
       exit: "Beenden",

@@ -5,6 +5,7 @@ import Layout from "~/components/layout";
 import Menu, { type MenuItem } from "~/components/menu";
 import SettingsFooter from "~/components/settings-footer";
 import TitleBar from "~/components/title-bar";
+import { MAX_MIC_PLAYBACK_GAIN } from "~/lib/audio/mic-playback";
 import { t } from "~/lib/i18n";
 import { settingsStore, type VolumeSettings } from "~/stores/settings";
 
@@ -36,8 +37,9 @@ export default function VolumeScreen() {
       label,
       value: () => Math.round(volume()[key] * 100),
       min: 0,
-      max: 100,
-      step: 1,
+      max: key === "micPlayback" ? MAX_MIC_PLAYBACK_GAIN * 100 : 100,
+      step: key === "micPlayback" ? 5 : 1,
+      renderValue: key === "micPlayback" ? (value) => `${value}%` : undefined,
       onInput: (value: number) => {
         setVolume((prev) => ({ ...prev, [key]: Math.round(value) / 100 }));
       },
