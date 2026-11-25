@@ -101,6 +101,6 @@ export async function fileResponse(request: Request, filePath: string, headers: 
 
   const body = Readable.toWeb(
     fs.createReadStream(filePath, { start, end, highWaterMark: CHUNK_SIZE }),
-  ) as ReadableStream<Uint8Array>;
+  ) as unknown as ReadableStream<Uint8Array>;
   return new Response(body, { status, headers: responseHeaders });
 }
